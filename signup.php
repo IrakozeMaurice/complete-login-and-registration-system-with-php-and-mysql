@@ -7,11 +7,13 @@
       $email = $_POST['email'];
       $username = $_POST['username'];
       $password = $_POST['password'];
+      //hashing the password
+      $hash_password = password_hash($password, PASSWORD_DEFAULT);
       try {
         $query = "insert into users (username, email, password, join_date)
                   values(:username, :email, :password, now())";
         $statement = $db->prepare($query);
-        $statement->execute(array(':username' => $username, ':email' => $email, ':password' => $password));
+        $statement->execute(array(':username' => $username, ':email' => $email, ':password' => $hash_password));
         if ($statement->rowCount() == 1) {
           $result = "<p style='padding:20px; color:green;'>Registration successful.</p>";
         }
