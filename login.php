@@ -48,5 +48,6 @@
         </tr>
       </table>
     </form>
+    <p> <a href="forgot_password.php">Forgot Password?</a> </p>
     <p> <a href="index.php">Back</a> </p>
     <?php include_once('private/shared/footer.php'); ?>
