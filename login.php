@@ -21,13 +21,13 @@
             // create session for current user
             $_SESSION['id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
-            header("Location: index.php");
+            redirect_to('index.php');
 
         }else {
-          $result = "<p style='color:red;'>Invalid username or password.</p>";
+          $result = show_msg("Invalid username or password.", "fail");
         }
       }else {
-        $result = "<p style='color:red;'>There are empty field(s) in the form </p>";
+        $result = show_msg("There are empty field(s) in the form.", "fail");
       }
     }
 

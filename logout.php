@@ -1,4 +1,5 @@
 <?php
 require_once('resource/session.php');
+require_once('resource/utilities.php');
 session_destroy();
-header("Location: index.php");
+redirect_to('index.php');

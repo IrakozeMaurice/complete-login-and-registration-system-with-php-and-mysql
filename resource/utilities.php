@@ -43,7 +43,30 @@ function show_errors($form_errors){
   return $errors;
 }
 
+function show_msg($message,$fail = 'fail'){
+  if ($fail === 'fail') {
+    $result = "<p style='padding:20px; border:1px solid gray; color:red;'>{$message}</p>";
+  }else {
+    $result = "<p style='padding:20px; border:1px solid gray; color:green;'>{$message}</p>";
+  }
+  return $result;
+}
 
+function redirect_to($url){
+  header("Location: " . $url);
+}
 
-
+function check_duplicate_entries($table, $col_name, $value, $db){
+  try {
+    $query = "select * from " . $table . " where " . $col_name . "=:col_name";
+    $statement = $db->prepare($query);
+    $statement->execute([':col_name' => $value]);
+    if($row = $statement->fetch()){
+      return true;
+    }
+    return false;
+  } catch (PDOException $e) {
+    //handle exception
+  }
+}
  ?>

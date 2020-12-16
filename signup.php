@@ -10,9 +10,17 @@
       $errors = [];
       $required_fields = ['email', 'username', 'password'];
       $errors = array_merge($errors, check_empty_fields($required_fields));
-      $errors = array_merge($errors,check_min_length(['username'=>4, 'password'=>6]));
-      $errors = array_merge($errors, check_email($_POST));
       if (empty($errors)) {
+        $errors = array_merge($errors,check_min_length(['username'=>4, 'password'=>6]));
+      }
+      $errors = array_merge($errors, check_email($_POST));
+      //check duplicate email or username
+      if (check_duplicate_entries("users", "email", $_POST['email'], $db)) {
+        $result = show_msg("Email is already taken.Try another one.");
+      }else if (check_duplicate_entries("users", "username", $_POST['username'], $db)) {
+        $result = show_msg("Username is already taken.Try another one.");
+      }
+      else if (empty($errors)) {
         $email = $_POST['email'];
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -24,13 +32,13 @@
           $statement = $db->prepare($query);
           $statement->execute(array(':username' => $username, ':email' => $email, ':password' => $hash_password));
           if ($statement->rowCount() == 1) {
-            $result = "<p style='padding:20px; color:green;'>Registration successful.</p>";
+            $result = show_msg("Registration successful.", "pass");
           }
         } catch (PDOException $e) {
-          $result = "<p style='padding:20px; color:red;'>Failed to signup: an error occured." . $e->getMessage() . "</p>";
+          $result = show_msg("Failed to signup: an error occured." . $e->getMessage());
         }
       }else {
-        $result = "<p style='color:red;> there was errors in the form.</p><br>'";
+        $result = show_msg("There are errors in the form.");
       }
     }
   ?>

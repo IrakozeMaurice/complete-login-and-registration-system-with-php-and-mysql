@@ -9,15 +9,17 @@ if (isset($_POST['resetBtn'])) {
   //initialize array to store errors
   $errors = [];
   //form validation
-  $required_fields = ['email', 'new_password', 'confirm_password'];
+  $required_fields = ['email', 'password'];
   $errors = array_merge($errors, check_empty_fields($required_fields));
-  $errors = array_merge($errors, check_min_length(['new_password' => 6, 'confirm_password' => 6]));
+  if(empty($errors)){
+    $errors = array_merge($errors, check_min_length(['password' => 6]));
+  }
   $errors = array_merge($errors, check_email($_POST));
 
   //check if no errors
   if(empty($errors)){
-    if ($_POST['new_password'] !== $_POST['confirm_password']) {
-      $result = "<p style='padding:20px; border:1px solid gray; color:red;'>The confirm password is not correct.</p>";
+    if ($_POST['password'] !== $_POST['confirm_password']) {
+      $result = show_msg("Please enter the same confirm password as your new password.");
     }else {
       try {
         //check if the email exists in the database
@@ -26,14 +28,14 @@ if (isset($_POST['resetBtn'])) {
         $statement->execute([':email' => $_POST['email']]);
         if ($statement->rowCount() == 1) {
           // the user exists
-          $hash_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+          $hash_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
           //update the password
           $queryUpdate = "update users set password =:password where email=:email";
           $statement = $db->prepare($queryUpdate);
           $statement->execute([':password' => $hash_password, ':email' => $_POST['email']]);
-          $result = "<p style='padding:20px; border:1px solid gray;color:green;'>Password reset successful</p>";
+          $result = show_msg("Password reset successful.", "pass");
         }else {
-          $result = "<p style='padding:20px; border:1px solid gray;color:red;'>The email address does not exist in our database.</p>";
+          $result = show_msg("The email address does not exist.");
         }
       } catch (PDOException $e) {
 
@@ -41,7 +43,7 @@ if (isset($_POST['resetBtn'])) {
 
     }
   }else {
-    $result = "<p style='padding:20px; border:1px solid gray;color:red;'>There are errors in the form</p>";
+    $result = show_msg("There are errors in the form.");
   }
 
 }
@@ -57,7 +59,7 @@ if (isset($_POST['resetBtn'])) {
       <td>Email:</td><td><input type="email" name="email"> </td>
     </tr>
     <tr>
-      <td>New Password:</td><td><input type="password" name="new_password"> </td>
+      <td>New Password:</td><td><input type="password" name="password"> </td>
     </tr>
     <tr>
       <td>Confirm Password:</td><td><input type="password" name="confirm_password"> </td>
