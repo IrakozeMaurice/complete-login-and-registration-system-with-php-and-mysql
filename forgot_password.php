@@ -1,7 +1,7 @@
 <?php
 
 $title = "Password Reset";
-include_once('private/shared/header.php');
+include_once('shared/header.php');
 require_once('resource/Database.php');
 require_once('resource/utilities.php');
 
@@ -33,9 +33,27 @@ if (isset($_POST['resetBtn'])) {
           $queryUpdate = "update users set password =:password where email=:email";
           $statement = $db->prepare($queryUpdate);
           $statement->execute([':password' => $hash_password, ':email' => $_POST['email']]);
-          $result = show_msg("Password reset successful.", "pass");
+
+          //call sweetalert
+          $result = "<script type=\"text/javascript\">
+          swal({
+              title: \"Updated\",
+              text: \"Password reset successful.\",
+              type: \"success\",
+              confirmButtonText: \"Thank you\" });
+          </script>";
+          // $result = show_msg("Password reset successful.", "pass");
         }else {
-          $result = show_msg("The email address does not exist.");
+
+          //call sweetalert
+          $result = "<script type=\"text/javascript\">
+          swal({
+              title: \"Oops\",
+              text: \"The email address does not exist.\",
+              type: \"error\",
+              confirmButtonText: \"Ok\" });
+          </script>";
+          // $result = show_msg("The email address does not exist.");
         }
       } catch (PDOException $e) {
 
@@ -47,28 +65,31 @@ if (isset($_POST['resetBtn'])) {
   }
 
 }
-
 ?>
 
-<h3>Password Reset Form</h3>
-<?php if(isset($result)) echo $result; ?>
-<?php if(!empty($errors)) echo show_errors($errors); ?>
-<form action="" method="post">
-  <table>
-    <tr>
-      <td>Email:</td><td><input type="email" name="email"> </td>
-    </tr>
-    <tr>
-      <td>New Password:</td><td><input type="password" name="password"> </td>
-    </tr>
-    <tr>
-      <td>Confirm Password:</td><td><input type="password" name="confirm_password"> </td>
-    </tr>
-    <tr>
-      <td></td><td><input type="submit" name="resetBtn" value="Reset Password"> </td>
-    </tr>
-  </table>
-</form>
-<p><a href="login.php">Back</a> </p>
+<div>
+  <?php if(isset($result)) echo $result; ?>
+  <?php if(!empty($errors)) echo show_errors($errors); ?>
+</div>
+<div class="clearfix"></div>
+<section class="col-lg-7">
+  <h3>Password reset Form</h3><br>
+  <form action="forgot_password.php" method="post">
+    <div class="form-group">
+      <label for="mail">Email</label>
+      <input type="email" class="form-control" id="mail" name="email" placeholder="Enter your Email">
+    </div>
+    <div class="form-group">
+      <label for="new_pass">New Password</label>
+      <input type="password" class="form-control" id="new_pass" name="password" placeholder="Enter new Password">
+    </div>
+    <div class="form-group">
+      <label for="confirm_pass">Confirm Password</label>
+      <input type="password" class="form-control" id="confirm_pass" name="confirm_password" placeholder="Re-enter Password">
+    </div>
+    <button type="submit" class="btn btn-primary pull-right" name="resetBtn">Reset Password</button>
+  </form><br><br>
+    <p> <a href="login.php" class="btn btn-default">Back</a> </p>
+</section>
 
-<?php include_once('private/shared/footer.php'); ?>
+<?php include_once('shared/footer.php'); ?>

@@ -43,11 +43,11 @@ function show_errors($form_errors){
   return $errors;
 }
 
-function show_msg($message,$fail = 'fail'){
-  if ($fail === 'fail') {
-    $result = "<p style='padding:20px; border:1px solid gray; color:red;'>{$message}</p>";
+function show_msg($message,$passOrFail = 'fail'){
+  if ($passOrFail === 'pass') {
+    $result = "<div class='alert alert-success'>{$message}</p>";
   }else {
-    $result = "<p style='padding:20px; border:1px solid gray; color:green;'>{$message}</p>";
+    $result = "<div class='alert alert-danger'>{$message}</p>";
   }
   return $result;
 }

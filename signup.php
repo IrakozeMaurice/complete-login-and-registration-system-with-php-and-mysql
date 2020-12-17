@@ -1,5 +1,5 @@
 <?php $title = 'Register Page'; ?>
-    <?php include_once('private/shared/header.php'); ?>
+    <?php include_once('shared/header.php'); ?>
     <?php require_once('resource/Database.php'); ?>
     <?php require_once('resource/utilities.php'); ?>
 
@@ -28,7 +28,15 @@
           $statement = $db->prepare($query);
           $statement->execute(array(':username' => $username, ':email' => $email, ':password' => $hash_password));
           if ($statement->rowCount() == 1) {
-            $result = show_msg("Registration successful.", "pass");
+
+            //call sweetalert
+            $result = "<script type=\"text/javascript\">
+            swal({
+                title: \"Congratulations {$username}\",
+                text: \"Registration completed successfully.\",
+                type: \"success\",
+                confirmButtonText: \"Thank you\" });
+            </script>";
           }
         } catch (PDOException $e) {
           // $result = show_msg("Failed to signup: an error occured." . $e->getMessage());
@@ -43,24 +51,29 @@
       }
     }
   ?>
-    <h3>Registration Form</h3>
+  <div>
     <?php if(isset($result)) echo $result; ?>
     <?php if(!empty($errors)) echo show_errors($errors); ?>
-    <form action="signup.php" method="post">
-      <table>
-        <tr>
-          <td>Email:</td><td> <input type="email" name="email" value=""> </td>
-        </tr>
-        <tr>
-          <td>Username:</td><td> <input type="text" name="username" value=""> </td>
-        </tr>
-        <tr>
-          <td>Password:</td><td> <input type="password" name="password" value=""> </td>
-        </tr>
-        <tr>
-          <td></td><td> <input style="float: right;" type="submit" name="signupBtn" value="Signup"> </td>
-        </tr>
-      </table>
-    </form>
-    <p> <a href="index.php">Back</a> </p>
-    <?php include_once('private/shared/footer.php'); ?>
+  </div>
+  <div class="clearfix"></div>
+    <section class="col-lg-7">
+      <h3>Registration Form</h3><br>
+      <form action="signup.php" method="post">
+        <div class="form-group">
+          <label for="mail">Email</label>
+          <input type="email" class="form-control" id="mail" name="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+          <label for="user">Username</label>
+          <input type="text" class="form-control" id="user" name="username" placeholder="username">
+        </div>
+        <div class="form-group">
+          <label for="pass">Password</label>
+          <input type="password" class="form-control" id="pass" name="password" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary pull-right" name="signupBtn">Sign up</button>
+      </form><br><br>
+        <p> <a href="index.php" class="btn btn-default">Back</a> </p>
+    </section>
+
+    <?php include_once('shared/footer.php'); ?>

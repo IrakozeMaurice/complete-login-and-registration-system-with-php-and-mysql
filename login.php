@@ -1,6 +1,6 @@
     <?php $title = 'Login Page'; ?>
-    <?php include_once('private/shared/header.php'); ?>
     <?php require_once('resource/session.php'); ?>
+    <?php include_once('shared/header.php'); ?>
     <?php require_once('resource/Database.php'); ?>
     <?php require_once('resource/utilities.php'); ?>
 
@@ -10,7 +10,6 @@
       $errors = [];
       $required_fields = ['username', 'password'];
       $errors = array_merge($errors, check_empty_fields($required_fields));
-
       if (empty($errors)) {
         // check if user exists in the database
         $query = "select * from users where username = :username";
@@ -21,8 +20,18 @@
             // create session for current user
             $_SESSION['id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
-            redirect_to('index.php');
+            //call sweetalert
+            echo $welcome = "<script type=\"text/javascript\">
+            swal({
+                title: \"Welcome back {$_SESSION['username']}\",
+                text: \"You're being logged in\",
+                type: \"success\",
+                closeOnConfirm: false });
 
+                setTimeout(function () {
+                  window.location.href = 'index.php';
+                }, 4000);
+            </script>";
         }else {
           $result = show_msg("Invalid username or password.", "fail");
         }
@@ -32,22 +41,32 @@
     }
 
    ?>
-    <h3>Login Form</h3>
+
+  <div>
     <?php if(isset($result)) echo $result; ?>
     <?php if(!empty($errors)) echo show_errors($errors); ?>
+  </div>
+  <div class="clearfix"></div>
+  <section class="col-lg-7">
+    <h3>Login Form</h3><br>
     <form action="login.php" method="post">
-      <table>
-        <tr>
-          <td>Username:</td><td> <input type="text" name="username" value=""> </td>
-        </tr>
-        <tr>
-          <td>Password:</td><td> <input type="password" name="password" value=""> </td>
-        </tr>
-        <tr>
-          <td></td><td> <input style="float: right;" type="submit" name="loginBtn" value="Signin"> </td>
-        </tr>
-      </table>
-    </form>
-    <p> <a href="forgot_password.php">Forgot Password?</a> </p>
-    <p> <a href="index.php">Back</a> </p>
-    <?php include_once('private/shared/footer.php'); ?>
+      <div class="form-group">
+        <label for="user">Username</label>
+        <input type="text" class="form-control" id="user" name="username" placeholder="username">
+      </div>
+      <div class="form-group">
+        <label for="pass">Password</label>
+        <input type="password" class="form-control" id="pass" name="password" placeholder="Password">
+      </div>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="remember"> Remember me
+        </label>
+      </div>
+      <a href="forgot_password.php">Forgot Password?</a>
+      <button type="submit" class="btn btn-primary pull-right" name="loginBtn">Sign in</button>
+    </form><br><br>
+      <p> <a href="index.php" class="btn btn-default">Back</a> </p>
+</section>
+
+<?php include_once('shared/footer.php'); ?>
