@@ -15,12 +15,8 @@
       }
       $errors = array_merge($errors, check_email($_POST));
       //check duplicate email or username
-      if (check_duplicate_entries("users", "email", $_POST['email'], $db)) {
-        $result = show_msg("Email is already taken.Try another one.");
-      }else if (check_duplicate_entries("users", "username", $_POST['username'], $db)) {
-        $result = show_msg("Username is already taken.Try another one.");
-      }
-      else if (empty($errors)) {
+
+      if (empty($errors)) {
         $email = $_POST['email'];
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -35,7 +31,12 @@
             $result = show_msg("Registration successful.", "pass");
           }
         } catch (PDOException $e) {
-          $result = show_msg("Failed to signup: an error occured." . $e->getMessage());
+          // $result = show_msg("Failed to signup: an error occured." . $e->getMessage());
+          if (check_duplicate_entries("users", "email", $_POST['email'], $db)) {
+            $result = show_msg("Email is already taken.Try another one.");
+          }else if (check_duplicate_entries("users", "username", $_POST['username'], $db)) {
+            $result = show_msg("Username is already taken.Try another one.");
+          }
         }
       }else {
         $result = show_msg("There are errors in the form.");
