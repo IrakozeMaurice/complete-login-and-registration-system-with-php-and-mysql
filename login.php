@@ -21,6 +21,10 @@
             // create session for current user
             $_SESSION['id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
+
+            $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
+            $_SESSION['last_active'] = time();
+            $_SESSION['$fingerprint'] = $fingerprint;
             //check if remember me checkbox is checked
             if ($remember === "yes") {
               rememberMe($row['id']);
