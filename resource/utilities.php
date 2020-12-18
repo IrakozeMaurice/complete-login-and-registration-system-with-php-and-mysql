@@ -69,4 +69,49 @@ function check_duplicate_entries($table, $col_name, $value, $db){
     //handle exception
   }
 }
+
+function rememberMe($user_id){
+  $encryptCookieData = base64_encode("jaSDFase438H8dHeu4e2K{$user_id}");
+  //cookie set expire in 30 days
+  setcookie("rememberUserCookie", $encryptCookieData, time()+60*24*100, "/");
+}
+
+function isCookieValid($db){
+  $isValid = false;
+  if (isset($_COOKIE['rememberUserCookie'])) {
+    // decode cookie and extract user ID
+    $decryptCookieData = base64_decode($_COOKIE['rememberUserCookie']);
+    $userID = explode("jaSDFase438H8dHeu4e2K", $decryptCookieData)[1];
+    //check if id exists in the database
+    $query = "select * from users where id = :id";
+    $statement = $db->prepare($query);
+    $statement->execute([':id' => $userID]);
+
+    if ($row = $statement->fetch()) {
+      //id exists
+      $id = $row['id'];
+      $username = $row['username'];
+      //create session for the user
+      $_SESSION['id'] = $id;
+      $_SESSION['username'] = $username;
+      $isValid = true;
+    }else {
+      $isValid = false;
+      signout();
+    }
+  }
+  return $isValid;
+}
+
+function signout(){
+  unset($_SESSION['username']);
+  unset($_SESSION['id']);
+  if (isset($_COOKIE['rememberUserCookie'])) {
+    unset($_COOKIE['rememberUserCookie']);
+    setcookie('rememberUserCookie', null, -1, '/');
+  }
+  session_destroy();
+  session_regenerate_id(true);
+  redirect_to('index.php');
+}
  ?>

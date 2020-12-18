@@ -1,4 +1,5 @@
-
+<?php require_once('resource/utilities.php'); ?>
+<?php require_once('resource/Database.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,7 +27,7 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="index.php">Home</a></li>
-            <?php if(isset($_SESSION['username'])): ?>
+            <?php if(isset($_SESSION['username']) || isCookieValid($db)): ?>
               <li><a href="#">My Profile</a></li>
               <li><a href="logout.php">Logout</a></li>
             <?php else: ?>

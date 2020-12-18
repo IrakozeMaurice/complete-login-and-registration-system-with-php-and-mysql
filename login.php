@@ -1,8 +1,8 @@
     <?php $title = 'Login Page'; ?>
     <?php require_once('resource/session.php'); ?>
-    <?php include_once('shared/header.php'); ?>
     <?php require_once('resource/Database.php'); ?>
     <?php require_once('resource/utilities.php'); ?>
+    <?php include_once('shared/header.php'); ?>
 
     <?php
 
@@ -11,6 +11,7 @@
       $required_fields = ['username', 'password'];
       $errors = array_merge($errors, check_empty_fields($required_fields));
       if (empty($errors)) {
+        $remember = isset($_POST['remember']) ? $_POST['remember'] : "";
         // check if user exists in the database
         $query = "select * from users where username = :username";
         $statement = $db->prepare($query);
@@ -20,6 +21,10 @@
             // create session for current user
             $_SESSION['id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
+            //check if remember me checkbox is checked
+            if ($remember === "yes") {
+              rememberMe($row['id']);
+            }
             //call sweetalert
             echo $welcome = "<script type=\"text/javascript\">
             swal({
@@ -30,7 +35,7 @@
 
                 setTimeout(function () {
                   window.location.href = 'index.php';
-                }, 4000);
+                }, 2000);
             </script>";
         }else {
           $result = show_msg("Invalid username or password.", "fail");
@@ -60,7 +65,7 @@
       </div>
       <div class="checkbox">
         <label>
-          <input type="checkbox" name="remember"> Remember me
+          <input type="checkbox" value="yes" name="remember"> Remember me
         </label>
       </div>
       <a href="forgot_password.php">Forgot Password?</a>
